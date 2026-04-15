@@ -130,7 +130,8 @@ def main():
             task_type="CAUSAL_LM",
         )
         model = get_peft_model(model, lora_config)
-        print("  PEFT LoRA model ready")
+        model.gradient_checkpointing_enable()  # trades compute for memory — essential for large batches
+        print("  PEFT LoRA model ready (gradient checkpointing ON)")
 
     # Print trainable params
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -169,6 +170,7 @@ def main():
         num_train_epochs=args.epochs,
         per_device_train_batch_size=args.batch_size,
         gradient_accumulation_steps=args.grad_accum,
+        gradient_checkpointing=True,
         learning_rate=args.lr,
         lr_scheduler_type="cosine",
         warmup_ratio=0.05,
