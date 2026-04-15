@@ -20,20 +20,28 @@ echo "FilingSense — LoRA SFT (mode: $MODE)"
 echo "============================================"
 echo ""
 
-# --- Step 1: Check dependencies ---
-echo "[1/4] Checking dependencies..."
-# If running inside our Docker image (Dockerfile.train), deps are pre-installed.
-# If running on a bare machine, install them now.
-if ! python3 -c "from trl import SFTTrainer" 2>/dev/null; then
-    echo "  Dependencies not found — installing (use Dockerfile.train to avoid this)..."
-    pip uninstall -y -q transformers trl sentence-transformers xformers \
-        torchvision torchaudio torchcodec torchao 2>/dev/null || true
-    pip install -q \
-        'transformers==4.44.2' 'sentence-transformers==3.1.1' 'trl==0.11.4' \
-        'peft>=0.13,<0.14' datasets faiss-cpu rank-bm25 accelerate bitsandbytes tqdm numpy
-else
-    echo "  Dependencies OK"
-fi
+# --- Step 1: Force-install exact pinned dependencies ---
+# Always install, never trust pre-installed packages (Vast.ai images have broken combos)
+echo "[1/4] Installing pinned dependencies..."
+echo "  Removing conflicting packages..."
+pip uninstall -y -q transformers trl sentence-transformers xformers \
+    torchvision torchaudio torchcodec torchao unsloth 2>/dev/null || true
+echo "  Installing torch 2.5.1 + transformers 4.44.2 (verified combo)..."
+pip install -q --no-cache-dir \
+    'torch==2.5.1+cu124' \
+    --index-url https://download.pytorch.org/whl/cu124
+pip install -q --no-cache-dir \
+    'transformers==4.44.2' 'sentence-transformers==3.1.1' 'trl==0.11.4' \
+    'peft>=0.13,<0.14' datasets faiss-cpu rank-bm25 accelerate bitsandbytes rich tqdm numpy
+echo "  Verifying imports..."
+python3 -c "
+from trl import SFTTrainer
+from peft import LoraConfig
+from sentence_transformers import SentenceTransformer
+import torch, transformers
+print(f'  torch={torch.__version__}, transformers={transformers.__version__}')
+print('  All imports OK')
+"
 
 # --- Step 2: Pre-download models + data ---
 echo "[2/4] Pre-downloading models + dataset..."
