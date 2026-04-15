@@ -1,0 +1,55 @@
+# FilingSense — verified CUDA + Python environment for LoRA training
+# Contains ONLY dependencies, no code (clone from GitHub at runtime)
+#
+# Build:  docker build -f Dockerfile.train -t filing-sense-train .
+# Test:   docker run --rm filing-sense-train python3 -c "from trl import SFTTrainer; print('OK')"
+#
+# On Vast.ai: use as custom Docker image, then:
+#   git clone https://github.com/YOUR_USER/filing-sense.git /app
+#   cd /app && bash scripts/run_lora.sh
+
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+
+# Avoid interactive prompts during apt install
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Python + pip + git (Ubuntu 22.04 ships Python 3.10, which is fine)
+RUN apt-get update && apt-get install -y \
+    python3 python3-pip python3-venv git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PyTorch 2.5 for CUDA 12.4 (2.6 lacks register_constant, breaks transformers)
+RUN pip install --no-cache-dir \
+    'torch==2.5.1+cu124' \
+    --index-url https://download.pytorch.org/whl/cu124
+
+# Install transformers 4.44 (works with torch 2.5, no register_constant needed)
+# and compatible versions of everything else
+RUN pip install --no-cache-dir \
+    'transformers==4.44.2' \
+    'sentence-transformers==3.1.1' \
+    'trl==0.11.4' \
+    'peft>=0.13,<0.14' \
+    datasets \
+    faiss-cpu \
+    rank-bm25 \
+    accelerate \
+    bitsandbytes \
+    rich \
+    tqdm \
+    numpy
+
+# Verify all imports work (fails the build if broken)
+RUN python3 -c "\
+from sentence_transformers import SentenceTransformer; \
+from trl import SFTTrainer; \
+from peft import LoraConfig; \
+import torch; print(f'torch={torch.__version__}'); \
+import transformers; print(f'transformers={transformers.__version__}'); \
+print('All imports OK')"
+
+# Working directory (code gets cloned here at runtime)
+WORKDIR /app
+
+# Default: drop into bash (user clones repo + runs script)
+CMD ["bash"]

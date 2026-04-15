@@ -1,0 +1,21 @@
+# Data
+datasets>=2.14.0
+
+# Embeddings & retrieval
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.4
+rank-bm25>=0.2.2
+
+# Reranking
+transformers>=4.35.0
+
+# LLM inference
+torch>=2.0.0
+accelerate>=0.24.0
+
+# Evaluation
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Utilities
+tqdm>=4.65.0

@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (downloaded/generated at runtime, not committed)
+data/raw/
+data/finqa_cache/
+data/sft_train.jsonl
+*.faiss
+*.pkl
+
+# Model outputs (trained on GPU, not committed)
+models/
+outputs/
+*.bin
+*.safetensors
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Environment
+.env
+.env.local
+
+# Logs
+wandb/
+logs/
+*.log
