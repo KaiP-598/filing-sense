@@ -114,10 +114,11 @@ def main():
         )
 
         tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+        # Note: do NOT pass device_map — accelerate's dispatch_model calls .to()
+        # which crashes with 4-bit models. bitsandbytes handles GPU placement automatically.
         model = AutoModelForCausalLM.from_pretrained(
             args.model_name,
             quantization_config=bnb_config,
-            device_map={"": 0},  # place on GPU 0 (device_map="auto" breaks with 4-bit in transformers 4.44)
         )
 
         lora_config = LoraConfig(
