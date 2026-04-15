@@ -103,7 +103,7 @@ def main():
 
     if args.no_unsloth:
         from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-        from peft import LoraConfig, get_peft_model
+        from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
         print("\nLoading model with PEFT + bitsandbytes...")
         bnb_config = BitsAndBytesConfig(
@@ -114,12 +114,13 @@ def main():
         )
 
         tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-        # Note: do NOT pass device_map — accelerate's dispatch_model calls .to()
-        # which crashes with 4-bit models. bitsandbytes handles GPU placement automatically.
         model = AutoModelForCausalLM.from_pretrained(
             args.model_name,
             quantization_config=bnb_config,
         )
+
+        # Required for 4-bit: enables gradient checkpointing + fixes input gradients
+        model = prepare_model_for_kbit_training(model)
 
         lora_config = LoraConfig(
             r=args.rank,
@@ -130,7 +131,6 @@ def main():
             task_type="CAUSAL_LM",
         )
         model = get_peft_model(model, lora_config)
-        model.gradient_checkpointing_enable()  # trades compute for memory — essential for large batches
         print("  PEFT LoRA model ready (gradient checkpointing ON)")
 
     # Print trainable params
