@@ -66,13 +66,13 @@ GPU_MEM=$(python3 -c "import torch; print(f'{torch.cuda.get_device_properties(0)
 echo "  Detected GPU: $GPU_NAME ($GPU_MEM)"
 
 if [ "$MODE" = "train" ] || [ "$MODE" = "all" ]; then
-    # Full SFT needs 80GB+ — check before wasting time
-    GPU_MEM_GB=$(python3 -c "import torch; print(int(torch.cuda.get_device_properties(0).total_mem / 1e9))" 2>/dev/null || echo "0")
-    if [ "$GPU_MEM_GB" -lt 40 ]; then
-        echo "ERROR: Full SFT needs 80GB+ VRAM (detected: ${GPU_MEM_GB}GB)"
-        echo "  Use an H100 or A100 80GB instance."
-        echo "  For smaller GPUs, use LoRA instead: bash scripts/run_lora.sh"
-        exit 1
+    # Full SFT needs 40GB+ — warn but don't block (VRAM detection can fail on some setups)
+    GPU_MEM_GB=$(python3 -c "import torch; print(int(torch.cuda.get_device_properties(0).total_mem / 1e9))" 2>&1 || echo "0")
+    if [ "$GPU_MEM_GB" -gt 0 ] && [ "$GPU_MEM_GB" -lt 40 ]; then
+        echo "WARNING: Full SFT typically needs 40GB+ VRAM (detected: ${GPU_MEM_GB}GB)"
+        echo "  Training may OOM. Consider using LoRA instead: bash scripts/run_lora.sh"
+        echo "  Continuing anyway in 5 seconds..."
+        sleep 5
     fi
 
     # Adjust batch size for GPU
