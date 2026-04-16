@@ -97,9 +97,17 @@ if [ "$MODE" = "eval" ] || [ "$MODE" = "all" ]; then
     echo ""
     echo ">>> End-to-end eval (LoRA model)..."
     echo ""
+    # Use local adapter if it exists (just trained), otherwise pull from HuggingFace Hub
+    if [ -d "outputs/lora-qwen2.5-3b" ]; then
+        ADAPTER_PATH="outputs/lora-qwen2.5-3b"
+    else
+        ADAPTER_PATH="kaiwu598/filing-sense-lora-qwen2.5-3b"
+    fi
+    echo "  Adapter: $ADAPTER_PATH"
+
     python3 -m eval.evaluate_rag \
         --model_path Qwen/Qwen2.5-3B \
-        --adapter_path outputs/lora-qwen2.5-3b \
+        --adapter_path "$ADAPTER_PATH" \
         --num_examples 200 \
         --use_reranker \
         --output_dir results
