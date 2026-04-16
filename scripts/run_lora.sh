@@ -111,6 +111,11 @@ if [ "$MODE" = "eval" ] || [ "$MODE" = "all" ]; then
         --num_examples 200 \
         --use_reranker \
         --output_dir results
+
+    # Save with descriptive name
+    cp results/eval_results.json results/eval_lora_qwen2.5_3b.json
+    [ -f results/eval_detailed_log.jsonl ] && cp results/eval_detailed_log.jsonl results/eval_detailed_lora.jsonl
+    echo "  Saved: results/eval_lora_qwen2.5_3b.json"
 fi
 
 echo ""
