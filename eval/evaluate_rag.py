@@ -248,7 +248,7 @@ def evaluate_end_to_end(
         gold_tokens = set(gold_context.lower().split())
         retrieval_hit = False
         for chunk in retrieved:
-            chunk_tokens = set(chunk.text.lower().split())
+            chunk_tokens = set(chunk.chunk.text.lower().split())
             if gold_tokens and len(gold_tokens & chunk_tokens) / len(gold_tokens) > 0.5:
                 retrieval_hit = True
                 break
@@ -261,7 +261,7 @@ def evaluate_end_to_end(
             "correct": is_match,
             "retrieval_hit": retrieval_hit,
             "model_output": gen_result.answer[:500],
-            "retrieved_texts": [c.text[:200] for c in retrieved[:3]],
+            "retrieved_texts": [c.chunk.text[:200] for c in retrieved[:3]],
         })
 
         # Progress update every 50 examples
