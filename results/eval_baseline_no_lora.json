@@ -1,0 +1,30 @@
+{
+  "retrieval": {
+    "bm25": {
+      "mode": "bm25",
+      "total": 200,
+      "hits": 89,
+      "recall@k": 0.445,
+      "mrr": 0.3694166666666667
+    },
+    "faiss": {
+      "mode": "faiss",
+      "total": 200,
+      "hits": 56,
+      "recall@k": 0.28,
+      "mrr": 0.22141666666666665
+    },
+    "hybrid": {
+      "mode": "hybrid",
+      "total": 200,
+      "hits": 93,
+      "recall@k": 0.465,
+      "mrr": 0.3743333333333333
+    }
+  },
+  "end_to_end": {
+    "model": "Qwen/Qwen2.5-3B",
+    "accuracy": 0.115,
+    "total": 200
+  }
+}
