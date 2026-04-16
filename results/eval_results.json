@@ -24,7 +24,7 @@
   },
   "end_to_end": {
     "model": "Qwen/Qwen2.5-3B",
-    "accuracy": 0.115,
+    "accuracy": 0.165,
     "total": 200
   }
 }
