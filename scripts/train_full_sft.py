@@ -117,8 +117,7 @@ def main():
         weight_decay=0.01,
         bf16=True,
         logging_steps=10,
-        save_strategy="epoch",
-        save_total_limit=2,
+        save_strategy="no",      # don't save checkpoints — disk space is tight on rentals
         max_seq_length=args.max_seq_length,
         dataset_text_field="text",
         seed=42,
