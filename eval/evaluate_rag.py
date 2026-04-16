@@ -243,13 +243,25 @@ def evaluate_end_to_end(
         if is_match:
             correct += 1
 
+        # Check if retrieval found the right context
+        gold_context = ex.get("context", "")
+        gold_tokens = set(gold_context.lower().split())
+        retrieval_hit = False
+        for chunk in retrieved:
+            chunk_tokens = set(chunk.text.lower().split())
+            if gold_tokens and len(gold_tokens & chunk_tokens) / len(gold_tokens) > 0.5:
+                retrieval_hit = True
+                break
+
         results_log.append({
             "idx": i,
             "query": query,
             "gold": gold_answer,
             "predicted": predicted,
             "correct": is_match,
-            "model_output": gen_result.answer[:200],  # truncate for log
+            "retrieval_hit": retrieval_hit,
+            "model_output": gen_result.answer[:500],
+            "retrieved_texts": [c.text[:200] for c in retrieved[:3]],
         })
 
         # Progress update every 50 examples
@@ -392,6 +404,14 @@ def main():
     with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
     print(f"\nResults saved to {output_path}")
+
+    # Save detailed per-example log for error taxonomy analysis
+    if e2e_result and e2e_result.get("results_log"):
+        log_path = output_dir / "eval_detailed_log.jsonl"
+        with open(log_path, "w") as f:
+            for entry in e2e_result["results_log"]:
+                f.write(json.dumps(entry) + "\n")
+        print(f"Detailed log saved to {log_path}")
 
     # --- Summary ---
     print("\n" + "=" * 60)
