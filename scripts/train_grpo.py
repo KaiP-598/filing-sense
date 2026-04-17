@@ -601,11 +601,12 @@ def main():
                 if len(mb_idx) == 0:
                     continue
 
-                mb_ids = input_ids[mb_idx]
-                mb_labels = labels[mb_idx]
-                mb_mask = response_mask[mb_idx]
-                mb_adv = advantages[mb_idx]
-                mb_ref = ref_log_probs[mb_idx]
+                mb_idx_t = torch.tensor(mb_idx, dtype=torch.long, device=device)
+                mb_ids = input_ids.index_select(0, mb_idx_t)
+                mb_labels = labels.index_select(0, mb_idx_t)
+                mb_mask = response_mask.index_select(0, mb_idx_t)
+                mb_adv = advantages.index_select(0, mb_idx_t)
+                mb_ref = ref_log_probs.index_select(0, mb_idx_t)
 
                 with torch.amp.autocast("cuda", dtype=torch.bfloat16):
                     result = get_log_probs(model, mb_ids, mb_labels)
