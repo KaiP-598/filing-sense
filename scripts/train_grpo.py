@@ -518,7 +518,9 @@ def main():
         model.parameters(), lr=args.lr, weight_decay=0.0, betas=(0.9, 0.95),
     )
 
-    micro_batch = max(1, rollout_batch // args.grad_accum)
+    # FinQA prompts are long (context + table + question), so logits are huge.
+    # Process 2 sequences at a time to avoid OOM on 80GB GPU.
+    micro_batch = 2
 
     # ------------------------------------------------------------------
     # 4. GRPO loop
