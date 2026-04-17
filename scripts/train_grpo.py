@@ -435,12 +435,12 @@ def main():
                         help="Questions per step (total rollouts = n_prompts * group_size)")
     parser.add_argument("--epochs_per_batch", type=int, default=1,
                         help="K: how many times to reuse each rollout batch")
-    parser.add_argument("--lr", type=float, default=2e-5,
-                        help="Learning rate")
+    parser.add_argument("--lr", type=float, default=5e-7,
+                        help="Learning rate (GRPO needs much lower than SFT — noisy gradients)")
     parser.add_argument("--clip_eps", type=float, default=0.2,
                         help="PPO clipping epsilon")
-    parser.add_argument("--grad_accum", type=int, default=4,
-                        help="Gradient accumulation steps")
+    # grad_accum removed — we now accumulate across ALL micro-batches
+    # and do one optimizer step per GRPO step (correct for policy gradient)
     parser.add_argument("--max_tokens", type=int, default=512,
                         help="Max tokens per generated response")
     parser.add_argument("--eval_every", type=int, default=10,
@@ -584,13 +584,17 @@ def main():
             torch.cuda.empty_cache()
 
         # 4f. Train for K epochs on this rollout batch
+        # We do ONE optimizer step per GRPO step, accumulating gradients
+        # across ALL micro-batches. This ensures we use the full batch signal.
         model.train()
         n_rollouts = len(flat_responses)
+        n_micro = (n_rollouts + micro_batch - 1) // micro_batch  # total micro-batches
 
         for epoch in range(args.epochs_per_batch):
+            optimizer.zero_grad()  # clean slate each epoch
             indices = list(range(n_rollouts))
             random.shuffle(indices)
-            mb_count = 0
+            total_loss = 0.0
 
             for mb_start in range(0, n_rollouts, micro_batch):
                 mb_idx = indices[mb_start:mb_start + micro_batch]
@@ -614,17 +618,19 @@ def main():
                     clip_eps=args.clip_eps,
                 )
 
-                (loss / args.grad_accum).backward()
-                mb_count += 1
+                # Divide by total micro-batches so gradients average correctly
+                (loss / n_micro).backward()
+                total_loss += loss.item()
 
-                if mb_count % args.grad_accum == 0:
-                    grad_norm = torch.nn.utils.clip_grad_norm_(
-                        model.parameters(), max_norm=1.0
-                    )
-                    optimizer.step()
-                    optimizer.zero_grad()
+            # One optimizer step per GRPO step (after seeing all rollouts)
+            grad_norm = torch.nn.utils.clip_grad_norm_(
+                model.parameters(), max_norm=1.0
+            )
+            optimizer.step()
+            optimizer.zero_grad()
 
-                    print(f"    loss={loss.item():.4f}, grad_norm={grad_norm.item():.4f}")
+            avg_loss = total_loss / n_micro
+            print(f"    epoch={epoch}, loss={avg_loss:.4f}, grad_norm={grad_norm.item():.4f}")
 
         # Clean up
         del input_ids, labels, response_mask, advantages, ref_log_probs

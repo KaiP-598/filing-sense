@@ -90,7 +90,7 @@ if [ "$MODE" = "train" ] || [ "$MODE" = "all" ]; then
         --n_steps 100 \
         --group_size 8 \
         --n_prompts 16 \
-        --lr 2e-5 \
+        --lr 5e-7 \
         --eval_every 10
 fi
 
