@@ -357,29 +357,13 @@ def create_inference_engine(model_path: str, device: str, seed: int, mem_util: f
 
     Why a separate GPU? Training needs GPU memory for gradients and optimizer
     states. vLLM needs memory for KV cache. Putting both on one GPU = OOM.
-    """
-    from vllm.model_executor import set_random_seed as vllm_seed
-    vllm_seed(seed)
 
+    Requires vLLM >= 0.7.0 for the `device` parameter.
+    The run_grpo.sh script installs a compatible version.
+    """
     ws_patch = patch("torch.distributed.get_world_size", return_value=1)
 
-    # The profiling assertion patch is version-specific — skip if not found
-    try:
-        from vllm.worker.worker import Worker
-        has_profiling_assert = hasattr(Worker, "_assert_memory_footprint_increased_during_profiling")
-    except ImportError:
-        has_profiling_assert = False
-
-    if has_profiling_assert:
-        prof_patch = patch(
-            "vllm.worker.worker.Worker._assert_memory_footprint_increased_during_profiling",
-            return_value=None,
-        )
-    else:
-        from contextlib import nullcontext
-        prof_patch = nullcontext()
-
-    with ws_patch, prof_patch:
+    with ws_patch:
         return LLM(
             model=model_path,
             device=device,
@@ -387,6 +371,7 @@ def create_inference_engine(model_path: str, device: str, seed: int, mem_util: f
             enable_prefix_caching=True,
             gpu_memory_utilization=mem_util,
             enforce_eager=True,
+            seed=seed,
         )
 
 

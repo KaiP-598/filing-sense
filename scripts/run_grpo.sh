@@ -31,14 +31,15 @@ echo "[1/3] Installing dependencies..."
 pip uninstall -y -q transformers trl sentence-transformers xformers \
     torchvision torchaudio torchcodec torchao unsloth 2>/dev/null || true
 
-echo "  Installing torch 2.5.1 + vLLM..."
+echo "  Installing torch + vLLM (needs >=0.7 for multi-GPU device param)..."
 pip install -q --no-cache-dir \
     'torch==2.5.1+cu124' \
     --index-url https://download.pytorch.org/whl/cu124
 pip install -q --no-cache-dir \
-    'transformers==4.44.2' 'sentence-transformers==3.1.1' 'trl==0.11.4' \
-    'peft>=0.13,<0.14' datasets faiss-cpu rank-bm25 accelerate bitsandbytes \
-    rich tqdm numpy vllm
+    'vllm>=0.7,<0.8'
+pip install -q --no-cache-dir \
+    'transformers==4.44.2' 'sentence-transformers==3.1.1' \
+    datasets faiss-cpu rank-bm25 accelerate rich tqdm numpy
 
 echo "  Verifying imports..."
 python3 -c "
