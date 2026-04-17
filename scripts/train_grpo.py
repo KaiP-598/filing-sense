@@ -309,7 +309,37 @@ def prepare_grpo_data(split: str = "train") -> list[dict]:
     We use GOLD context (not retrieved) for training, same as SFT.
     The model learns REASONING skills, not how to handle bad retrieval.
     """
-    from scripts.prepare_sft_data import _safe_join, _table_to_text
+    import ast
+
+    def _safe_join(raw):
+        if isinstance(raw, list):
+            return " ".join(str(s) for s in raw)
+        if isinstance(raw, str):
+            s = raw.strip()
+            if s.startswith("[") and s.endswith("]"):
+                try:
+                    parsed = ast.literal_eval(s)
+                    if isinstance(parsed, list):
+                        return " ".join(str(item) for item in parsed)
+                except (ValueError, SyntaxError):
+                    pass
+            return s
+        return str(raw) if raw else ""
+
+    def _table_to_text(raw_table):
+        if not raw_table:
+            return ""
+        if isinstance(raw_table, str):
+            return raw_table
+        if isinstance(raw_table, list):
+            lines = []
+            for row in raw_table:
+                if isinstance(row, list):
+                    lines.append(" | ".join(str(cell) for cell in row))
+                else:
+                    lines.append(str(row))
+            return "\n".join(lines)
+        return str(raw_table)
 
     ds = load_dataset("wandb/finqa-data-processed", split=split)
     examples = []
