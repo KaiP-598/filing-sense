@@ -362,10 +362,23 @@ def create_inference_engine(model_path: str, device: str, seed: int, mem_util: f
     vllm_seed(seed)
 
     ws_patch = patch("torch.distributed.get_world_size", return_value=1)
-    prof_patch = patch(
-        "vllm.worker.worker.Worker._assert_memory_footprint_increased_during_profiling",
-        return_value=None,
-    )
+
+    # The profiling assertion patch is version-specific — skip if not found
+    try:
+        from vllm.worker.worker import Worker
+        has_profiling_assert = hasattr(Worker, "_assert_memory_footprint_increased_during_profiling")
+    except ImportError:
+        has_profiling_assert = False
+
+    if has_profiling_assert:
+        prof_patch = patch(
+            "vllm.worker.worker.Worker._assert_memory_footprint_increased_during_profiling",
+            return_value=None,
+        )
+    else:
+        from contextlib import nullcontext
+        prof_patch = nullcontext()
+
     with ws_patch, prof_patch:
         return LLM(
             model=model_path,
