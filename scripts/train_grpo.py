@@ -453,19 +453,21 @@ def main():
     # ------------------------------------------------------------------
     # 1. Load model (starting from SFT checkpoint)
     # ------------------------------------------------------------------
-    print(f"\nLoading model: {args.model_path}")
-    try:
-        model = AutoModelForCausalLM.from_pretrained(
-            args.model_path, torch_dtype=torch.bfloat16,
-            attn_implementation="flash_attention_2",
-        ).to(device)
-        print("  Using flash_attention_2")
-    except (ImportError, ValueError):
-        model = AutoModelForCausalLM.from_pretrained(
-            args.model_path, torch_dtype=torch.bfloat16,
-            attn_implementation="sdpa",
-        ).to(device)
-        print("  Using SDPA fallback")
+    # Pin training to GPU 0 only — GPU 1 must stay clean for vLLM
+    print(f"\nLoading model on cuda:0: {args.model_path}")
+    with torch.cuda.device(0):
+        try:
+            model = AutoModelForCausalLM.from_pretrained(
+                args.model_path, torch_dtype=torch.bfloat16,
+                attn_implementation="flash_attention_2",
+            ).to(device)
+            print("  Using flash_attention_2")
+        except (ImportError, ValueError):
+            model = AutoModelForCausalLM.from_pretrained(
+                args.model_path, torch_dtype=torch.bfloat16,
+                attn_implementation="sdpa",
+            ).to(device)
+            print("  Using SDPA fallback")
 
     tokenizer = AutoTokenizer.from_pretrained(args.model_path)
     if tokenizer.pad_token is None:
@@ -477,8 +479,10 @@ def main():
     # ------------------------------------------------------------------
     # 2. vLLM inference engine on GPU 1
     # ------------------------------------------------------------------
+    # Clear any stale CUDA context on GPU 1 before vLLM profiling
+    torch.cuda.empty_cache()
     print("\nStarting vLLM inference engine on cuda:1...")
-    engine = create_inference_engine(args.model_path, "cuda:1", args.seed)
+    engine = create_inference_engine(args.model_path, "cuda:1", args.seed, mem_util=0.45)
 
     gen_params = SamplingParams(
         temperature=1.0,      # diversity is critical — we need varied candidates
