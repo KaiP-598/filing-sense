@@ -124,7 +124,12 @@ def make_decompose_node(openai_api_key: str, model_name: str = "gpt-4o-mini"):
         )
 
         raw = response.choices[0].message.content.strip()
-        sub_queries = [q.strip() for q in raw.split("\n") if q.strip()]
+        # Strip bullet prefixes (-, *, numbers) and surrounding quotes
+        sub_queries = []
+        for q in raw.split("\n"):
+            q = q.strip().lstrip("-*•123456789. ").strip().strip('"').strip("'")
+            if q:
+                sub_queries.append(q)
 
         # Always include the original query — it may work better than decomposed ones
         if query not in sub_queries:
