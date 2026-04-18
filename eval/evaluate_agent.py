@@ -41,8 +41,8 @@ def run_agent_eval(
     results_log = []
 
     for i, ex in enumerate(examples):
-        query = ex["qa"]["question"]
-        gold = str(ex["qa"]["answer"])
+        query = ex["query"]
+        gold = str(ex["exe_ans"])
 
         try:
             start = time.time()
@@ -111,7 +111,7 @@ def main():
     args = parser.parse_args()
 
     print("Loading FinQA dataset...")
-    ds = load_dataset("ibm/finqa", trust_remote_code=True)
+    ds = load_dataset("wandb/finqa-data-processed")
     train_examples = list(ds["train"])
     test_examples = list(ds["test"])
 
