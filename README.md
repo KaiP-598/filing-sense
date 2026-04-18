@@ -28,12 +28,12 @@ Query → Hybrid Retrieval (BM25 + FAISS + reranker) → LLM → Answer
 
 ## Results (200 FinQA test examples)
 
-| Stage | E2E Accuracy | Training Cost |
-|---|---|---|
-| Base Qwen2.5-3B + RAG | 11.5% | $0 |
-| + LoRA SFT | 16.5% | ~$3 |
-| + Full SFT | 16.5% | ~$15 |
-| + GRPO | 17.0% | ~$25 |
+| Stage | E2E Accuracy |
+|---|---|
+| Base Qwen2.5-3B + RAG | 11.5% |
+| + LoRA SFT | 16.5% |
+| + Full SFT | 16.5% |
+| + GRPO | 17.0% |
 
 With gold context (bypassing retrieval), GRPO achieves **68%** — the 68% vs 17% gap shows retrieval is the bottleneck, not model quality.
 
