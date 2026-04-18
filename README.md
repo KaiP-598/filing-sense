@@ -3,13 +3,11 @@
 ![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
 
-AI analyst for SEC filings. Ask financial questions about any public company — powered by RAG, agentic workflows, and custom fine-tuning with GRPO.
+AI system for answering financial questions from SEC 10-K filings — powered by hybrid retrieval (BM25 + FAISS), cross-encoder reranking, and GRPO-trained reasoning.
 
-> **Work in progress.** Core RAG pipeline is functional. Fine-tuning, agent, and live EDGAR mode coming soon.
+Benchmarked on [FinQA](https://arxiv.org/abs/2109.00122): 8,281 Q&A pairs from S&P 500 10-K filings with ground-truth numerical answers.
 
 ## What This Does
-
-FilingSense answers multi-step financial questions by retrieving relevant sections from SEC 10-K filings and reasoning over them:
 
 ```
 User:  "What was the pension cost growth rate from 2012 to 2013?"
@@ -22,21 +20,32 @@ User:  "What was the pension cost growth rate from 2012 to 2013?"
 ```
 Query → Hybrid Retrieval (BM25 + FAISS + reranker) → LLM → Answer
          │                                              │
-         ├─ BM25: exact keyword matching                ├─ Base model (Qwen2.5-3B)
-         ├─ FAISS: semantic similarity                  ├─ + LoRA SFT (coming)
-         ├─ RRF: merge both rankings                    ├─ + Full SFT (coming)
-         └─ Cross-encoder: precision rerank             └─ + GRPO (coming)
+         ├─ BM25: exact keyword matching (44.5%)        ├─ Base Qwen2.5-3B
+         ├─ FAISS: bge-small-en-v1.5 (28.0%)           ├─ + LoRA SFT
+         ├─ RRF: merge both rankings (46.5%)            ├─ + Full SFT
+         └─ Cross-encoder: ms-marco-MiniLM-L-6-v2      └─ + GRPO (68% gold)
 ```
 
-## Pipeline Progression (benchmarked on FinQA)
+## Results (200 FinQA test examples)
 
-| Method | Accuracy | Status |
+| Stage | E2E Accuracy | Training Cost |
 |---|---|---|
-| Base model | ~25% | Coming |
-| + RAG | ~50% | **In progress** |
-| + RAG + LoRA SFT | ~63% | Coming |
-| + RAG + Full SFT | ~66% | Coming |
-| + RAG + Full SFT + GRPO | ~73% | Coming |
+| Base Qwen2.5-3B + RAG | 11.5% | $0 |
+| + LoRA SFT | 16.5% | ~$3 |
+| + Full SFT | 16.5% | ~$15 |
+| + GRPO | 17.0% | ~$25 |
+
+With gold context (bypassing retrieval), GRPO achieves **68%** — the 68% vs 17% gap shows retrieval is the bottleneck, not model quality.
+
+For detailed analysis, error taxonomy, and production roadmap, see [ANALYSIS.md](ANALYSIS.md).
+
+## Models
+
+All checkpoints on HuggingFace:
+
+- [`kaiwu598/filing-sense-lora-qwen2.5-3b`](https://huggingface.co/kaiwu598/filing-sense-lora-qwen2.5-3b) — LoRA adapter
+- [`kaiwu598/filing-sense-full-sft-qwen2.5-3b`](https://huggingface.co/kaiwu598/filing-sense-full-sft-qwen2.5-3b) — Full SFT
+- [`kaiwu598/filing-sense-grpo-qwen2.5-3b`](https://huggingface.co/kaiwu598/filing-sense-grpo-qwen2.5-3b) — GRPO (best checkpoint)
 
 ## Project Structure
 
@@ -46,32 +55,31 @@ src/
   indexing.py       # FAISS (dense) + BM25 (sparse) dual index
   retrieval.py      # Hybrid search + RRF + cross-encoder reranker
   generation.py     # Prompt building + LLM answer generation
+eval/
+  evaluate_rag.py   # End-to-end RAG evaluation on FinQA
+  error_taxonomy.py # Error classification across all models
 data/
   download_finqa.py # Download FinQA dataset from HuggingFace
-eval/
-  (coming)          # Evaluation scripts and metrics
-tests/
-  (coming)          # Unit tests
+scripts/
+  run_lora_sft.sh   # LoRA fine-tuning script
+  run_full_sft.sh   # Full SFT script
+  run_grpo.sh       # GRPO training script
 ```
-
-## Dataset
-
-[FinQA](https://arxiv.org/abs/2109.00122) (Chen et al., EMNLP 2021): 8,281 Q&A pairs grounded in SEC 10-K annual reports from S&P 500 companies, 1999-2019. Each example includes the source table, surrounding text, question, step-by-step calculation program, and ground-truth answer.
 
 ## Quick Start
 
 ```bash
 pip install -r requirements.txt
 python data/download_finqa.py
+python -m eval.evaluate_rag --model_path Qwen/Qwen2.5-3B --num_examples 200
 ```
 
 ## Related Work
 
-- [Fin-R1](https://arxiv.org/abs/2503.16252) — showed GRPO beats PPO/DPO on FinQA
+- [Fin-R1](https://arxiv.org/abs/2503.16252) — showed GRPO beats PPO/DPO on FinQA, achieving 76.0% with a 7B model
 - [FinLoRA](https://arxiv.org/abs/2505.19819) — benchmarked LoRA methods on financial datasets
-- [GRPO from Scratch](https://github.com/KaiP-598/grpo-from-scratch) — my from-scratch implementation of the GRPO algorithm
-
-This project differs by: (a) comparing two model families to isolate cost-efficiency tradeoffs, (b) shipping the full production stack (RAG + agent + SFT + GRPO + live demo), and (c) building GRPO from scratch rather than using TRL.
+- [FinQA](https://arxiv.org/abs/2109.00122) (Chen et al., EMNLP 2021) — original dataset
+- [GRPO from Scratch](https://github.com/KaiP-598/grpo-from-scratch) — my from-scratch implementation with 10 ablation experiments
 
 ## License
 
