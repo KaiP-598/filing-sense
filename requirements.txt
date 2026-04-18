@@ -17,5 +17,9 @@ accelerate>=0.24.0
 numpy>=1.24.0
 pandas>=2.0.0
 
+# Agent
+langgraph>=1.0.0
+openai>=1.0.0
+
 # Utilities
 tqdm>=4.65.0
