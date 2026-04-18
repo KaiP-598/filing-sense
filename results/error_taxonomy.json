@@ -1,0 +1,91 @@
+{
+  "LoRA SFT": {
+    "total": 200,
+    "categories": {
+      "correct": {
+        "count": 33,
+        "percent": 0.165
+      },
+      "retrieval_miss": {
+        "count": 106,
+        "percent": 0.53
+      },
+      "wrong_extraction": {
+        "count": 49,
+        "percent": 0.245
+      },
+      "wrong_operation": {
+        "count": 7,
+        "percent": 0.035
+      },
+      "reasoning_loop": {
+        "count": 1,
+        "percent": 0.005
+      },
+      "format_error": {
+        "count": 4,
+        "percent": 0.02
+      }
+    }
+  },
+  "Full SFT": {
+    "total": 200,
+    "categories": {
+      "correct": {
+        "count": 33,
+        "percent": 0.165
+      },
+      "retrieval_miss": {
+        "count": 104,
+        "percent": 0.52
+      },
+      "wrong_extraction": {
+        "count": 51,
+        "percent": 0.255
+      },
+      "wrong_operation": {
+        "count": 5,
+        "percent": 0.025
+      },
+      "reasoning_loop": {
+        "count": 3,
+        "percent": 0.015
+      },
+      "format_error": {
+        "count": 4,
+        "percent": 0.02
+      }
+    }
+  },
+  "GRPO": {
+    "total": 200,
+    "categories": {
+      "correct": {
+        "count": 34,
+        "percent": 0.17
+      },
+      "retrieval_miss": {
+        "count": 104,
+        "percent": 0.52
+      },
+      "wrong_extraction": {
+        "count": 49,
+        "percent": 0.245
+      },
+      "wrong_operation": {
+        "count": 6,
+        "percent": 0.03
+      },
+      "reasoning_loop": {
+        "count": 3,
+        "percent": 0.015
+      },
+      "format_error": {
+        "count": 4,
+        "percent": 0.02
+      }
+    }
+  },
+  "comparison_table": "Category             |           LoRA SFT |           Full SFT |               GRPO\n-----------------------------------------------------------------------------------\nCorrect              |     33 (16.5%) |     33 (16.5%) |     34 (17.0%)\nRetrieval miss       |    106 (53.0%) |    104 (52.0%) |    104 (52.0%)\nWrong extraction     |     49 (24.5%) |     51 (25.5%) |     49 (24.5%)\nWrong operation      |      7 ( 3.5%) |      5 ( 2.5%) |      6 ( 3.0%)\nReasoning loop       |      1 ( 0.5%) |      3 ( 1.5%) |      3 ( 1.5%)\nFormat/sign error    |      4 ( 2.0%) |      4 ( 2.0%) |      4 ( 2.0%)\n-----------------------------------------------------------------------------------\nTotal                |            200 |            200 |            200",
+  "interview_summary": "KEY FINDINGS\n============================================================\n\n1. RETRIEVAL IS THE BOTTLENECK\n   52% of all examples fail at retrieval \u2014 the correct\n   chunk never makes it into the top-5 results.\n   Fix this first: better chunking, domain embeddings, query expansion.\n\n2. MODELS ARE EQUIVALENT ON RAG\n   All three models (LoRA, Full SFT, GRPO) show nearly identical\n   error distributions. The training method doesn't matter when\n   retrieval fails \u2014 you can't reason over missing context.\n\n3. GRPO'S REAL IMPACT IS ON REASONING\n   With gold context, GRPO hits 68% vs ~40% for SFT.\n   The model learned better financial reasoning, but RAG\n   caps the end-to-end system at 17%.\n\n4. WRONG EXTRACTION (24%) IS THE #2 PROBLEM\n   Model finds the right document but pulls numbers from the\n   wrong row/column. This is a table-understanding problem \u2014\n   better table serialization or structured extraction would help.\n\n5. PRODUCTION PRIORITY ORDER\n   1. Improve retrieval (domain embeddings, better chunking)\n   2. Better table parsing (structured extraction)\n   3. More GRPO training data (expand beyond FinQA)\n\nINTERVIEW SOUND BITE\n------------------------------------------------------------\n\"52% of errors are retrieval misses \u2014 the model never sees the\nright context. 17% are wrong number extraction from tables.\n11% are wrong math operations. So the #1 lever is retrieval,\nnot more training. GRPO proves this: 68% with gold context,\n17% with RAG \u2014 the model can reason, it just needs the right data.\""
+}

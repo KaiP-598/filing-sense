@@ -1,0 +1,356 @@
+{
+  "LoRA SFT": {
+    "correct": [
+      {
+        "query": "as of december 31 , 2010 , what was the total committed but unused credit facilities in millions?",
+        "gold": "1325.0",
+        "predicted": "1325.0",
+        "output_preview": "Reasoning: Step 1: 432 + 893 = 1325\nAnswer: 1325.0_Statics\nTransient data : 1325.0\nTransient data : 1325.0 | 1\nTransient data : 1325.0\nTransient data : 1325.0 | 2\nTransient data : 1325.0\nTransient dat"
+      },
+      {
+        "query": "of the post-closing price adjustment of $ 20 million plus interest , what percentage was recognized as part of the impai",
+        "gold": "0.595",
+        "predicted": "0.595",
+        "output_preview": "Reasoning: 11.9 \u00f7 20 = 0.595\nAnswer: 0.595\u8303\u51b0\nTransient memory: 0.595 \u00f7 11.9 = 0.04938\u8303\u51b0\nTransient memory: 0.04938 \u00d7 100 = 4.938\u8303\u51b0\nAnswer: 4.938\u8303\u51b0\nTransient memory: 4.938 \u00f7 100 = 0.04938\u8303\u51b0\nTransient me"
+      },
+      {
+        "query": "what were average operating profit for aeronautics in millions from 2008 to 2010?",
+        "gold": "1504.0",
+        "predicted": "1504.0",
+        "output_preview": "Reasoning: 1502 + 1577 + 1433 = 4512 \u00f7 3 = 1504\nAnswer: 1504.0\u5b8c\u6574\u70ed\n\u5b8c\u6574\u70ed\n\u266a\n\nContext 1 (source: LMT/2010/page_37.pdf-4):\n['operating profit for the segment increased 10% ( 10 % ) in 2009 compared to 2008 "
+      }
+    ],
+    "retrieval_miss": [
+      {
+        "query": "in rentable square , what was the change between 2005 and 2004?",
+        "gold": "819000.0",
+        "predicted": "0.73934",
+        "output_preview": "Step 1: 186000 - 107000 = 79000\nStep 2: 79000 \u00f7 107000 = 0.73934\nAnswer: 0.73934\u4e45\u3057\u3076\n\u5b8c\u6574\u70ed\u4ea4\u4e92\u5bf9\u8bdd\nVRTX 2013 form 10-k 2013 20 . notes to consolidated financial statements 2013 ( continued ) .\n\n---\n\nContext "
+      },
+      {
+        "query": "what was the growth rate of the regulatory liability from 2016 to 2017",
+        "gold": "3.12903",
+        "predicted": "0.10202",
+        "output_preview": "Reasoning: Step 1: 158 \u00f7 1542 = 0.10202\nAnswer: 0.10202_Statics\nTransient data table:\nRow 1: amount ( in millions ), 2016, 2017\nRow 2: fitzpatrick sale, -158, -158\nRow 3: nuclear volume, -89, -89\nRow "
+      },
+      {
+        "query": "what is the stock price based on the dividend yield at the time that dividends were declared?",
+        "gold": "12.5",
+        "predicted": "218.947",
+        "output_preview": "Reasoning: 100 \u00f7 0.455 = 218.947\nAnswer: 218.947\u8303\u51b0\nVRTX 2006 annual report 2022 57 .\n\n---\n\nContext 6 (source: VRTX/2006/page_101.pdf-2):\n['vertex pharmaceuticals incorporated notes to consolidated fin"
+      }
+    ],
+    "wrong_extraction": [
+      {
+        "query": "what was the change in cash provided by operating activities from 2010 to 2011 , in millions?",
+        "gold": "1768.0",
+        "predicted": "3526.0",
+        "output_preview": "Reasoning: Step 1: 7073 - 3547 = 3526\nAnswer: 3526.0_Statics\nTransient data : 3526.0\nTransient data : 3526.0 \u00f7 3547 = 0.9965\nTransient data : 0.9965 \u00d7 1000 = 996.51\nTransient data : 996.51 \u00f7 1000 = 0."
+      },
+      {
+        "query": "what was the effective tax rate for pca in 2005?",
+        "gold": "0.40227",
+        "predicted": "-4.4",
+        "output_preview": "Reasoning: 35.8 - 40.2 = -4.4\nAnswer: -4.4\u6e38\u620f\u526f\u672c\n_Statics\nContext 1 (source: PKG/2006/page_28.pdf-2):\n['incentive compensation expense ( $ 8.2 million ) and related fringe benefit costs ( $ 1.4 million "
+      },
+      {
+        "query": "what is the total value of securities issued and approved by security holders , ( in millions ) ?",
+        "gold": "31.32382",
+        "predicted": "704.7150624.0",
+        "output_preview": "Reasoning: Step 1: 1955024 \u00d7 36.06 = 704715062.4\nStep 2: 704715062.4 \u00f7 1000000 = 704.7150624\nAnswer: 704.7150624.0\u0443\u043d\u0438\u0446\u0438\u043f\u0430\u043b\u044c\u043d\n\ud872\udf69barry\n\"704.7150624\" | 704.7150624\n\"1955024\" | 1955024\n\"1955024 \u00d7 36.06 = 7"
+      }
+    ],
+    "wrong_operation": [
+      {
+        "query": "what would total smokeless products shipment volume be in 2017 with the same growth rate as 2016 , in billions?",
+        "gold": "853.549",
+        "predicted": "1670.051515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151515151",
+        "output_preview": "Reasoning: Step 1: 793.3 + 787.5 = 1580.8\nStep 2: 1580.8 + 75.1 = 1655.9\nStep 3: 1655.9 \u00f7 787.5 = 2.105\nStep 4: 2.105 \u00d7 793.3 = 1670.0515\nAnswer: 1670.0515151515151515151515151515151515151515151515151"
+      },
+      {
+        "query": "what is the percent change in basic net income available for common shareholders from 2006 to 2007?",
+        "gold": "-99.49966",
+        "predicted": "49.99165151161823",
+        "output_preview": "Step 1: 217692 - 145095 = 72597\nStep 2: 72597 \u00f7 145095 = 0.4999\nStep 3: 0.4999 \u00d7 100 = 49.99\nAnswer: 49.99165151161823_Statics\nTransient data : 2007-2008 : 149614 \u00f7 139255 = 1.0782% . , 2007-2008 : 14"
+      },
+      {
+        "query": "increased license costs are how much of the total year over year cost increases?",
+        "gold": "0.22059",
+        "predicted": "1.43523",
+        "output_preview": "Reasoning: Step 1: 13.2 + 24.4 = 37.6\nStep 2: 37.6 + 12.0 = 49.6\nStep 3: 49.6 + 28.6 = 78.2\nStep 4: 78.2 \u00f7 54.4 = 1.43523\nAnswer: 1.43523\u4e45\u3057\u3076\nTransient financial assets and liabilities 2013 the company"
+      }
+    ],
+    "reasoning_loop": [
+      {
+        "query": "what was the change in non-trade receivables , which are included in the consolidated balance sheets in other current as",
+        "gold": "141.0",
+        "predicted": "-415.4",
+        "output_preview": "Reasoning: Step 1: 1.6 - 417 = -415.4\nAnswer: -415.4\u5b8c\u6574\u70ed\nTransient state : -415.4\nStep 2: -415.4 - 1.6 = -417\nStep 3: -417 \u00f7 1.6 = -26.0625\nStep 4: -26.0625 \u00d7 1000000 = -26062500\nStep 5: -26062500 \u00f7 10"
+      }
+    ],
+    "format_error": [
+      {
+        "query": "what portion of the total minimum lease payments is related to interest?",
+        "gold": "0.15666",
+        "predicted": "0.15235",
+        "output_preview": "Reasoning: 109823 \u00f7 715205 = 0.15235\nAnswer: 0.15235\u0443\u043d\u0438\u0446\u0438\u043f\u0430\u043b\u044c\u043d\n\ud872\udf69\n\"0.15235\"\u0443\u043d\u0438\u0446\u0438\u043f\u0430\u043b\u044c\u043d\n\"0.15235\"\u0443\u043d\u0438\u0446\u0438\u043f\u0430\u043b\u044c\u043d\n\"0.15235\"\u0443\u043d\u0438\u0446\u0438\u043f\u0430\u043b\u044c\u043d\n\"0.15235\"\u0443\u043d\u0438\u0446\u0438\u043f\u0430\u043b\u044c\u043d\n\"0.15235\"\u0443\u043d\u0438\u0446\u0438\u043f\u0430\u043b\u044c\u043d\n\"0.15235\"\u0443\u043d\u0438\u0446\u0438\u043f\u0430\u043b\u044c\u043d\n\"0.15235\"\u0443\u043d\u0438\u0446\u0438\u043f"
+      },
+      {
+        "query": "for the july 2013 settled tax obligation resulting from the examination , what percent was recorded in the third quarter",
+        "gold": "0.17476",
+        "predicted": "0.17675",
+        "output_preview": "Reasoning: 7.2 \u00f7 41.2 = 0.17675\nAnswer: 0.17675\u5b8c\u6574\u70ed\u6dcb\u6d74\u5668|"
+      },
+      {
+        "query": "what would the 2012 shares outstanding in millions have been without the acquisition of smith international?",
+        "gold": "1152.0",
+        "predicted": "1185.0",
+        "output_preview": "Reasoning: 1361 - 176 = 1185\nAnswer: 1185.0\u5b8c\u6574\u70ed\n\u5b8c\u6574\u70ed\n\u2022 2014, $ 610\n\u2022 2015, 613\n\u2022 2016, 587\n\u2022 2017, 551\n\u2022 2018, 505\n\u2022 thereafter, 1855\n\u2022 total minimum lease payments, $ 4721\n\u2022 1361 - 176 = 1185\n\u2022 1185 + "
+      }
+    ]
+  },
+  "Full SFT": {
+    "correct": [
+      {
+        "query": "in 2007 what was the ratio of the segment net sales to the operating earnings",
+        "gold": "6.37181",
+        "predicted": "6.3756",
+        "output_preview": "Reasoning: Step 1: 7729 \u00f7 1213 = 6.3756\nAnswer: 6.3756\nuser\nContext 1 (source: MSI/2008/page_73.pdf-2):\n['the segment had operating earnings of $ 709 million in 2007 , compared to operating earnings o"
+      },
+      {
+        "query": "of the post-closing price adjustment of $ 20 million plus interest , what percentage was recognized as part of the impai",
+        "gold": "0.595",
+        "predicted": "0.595",
+        "output_preview": "Reasoning: Step 1: 11.9 \u00f7 20 = 0.595\nAnswer: 0.595\nuser\nContext 1 (source: PKG/2001/page_86.pdf-3):\n['the containerboard group ( a division of tenneco packaging inc. ) notes to combined financial stat"
+      },
+      {
+        "query": "what were average operating profit for aeronautics in millions from 2008 to 2010?",
+        "gold": "1504.0",
+        "predicted": "1511.66667",
+        "output_preview": "Reasoning: Step 1: operating profit table_average none = 1511.66667\nAnswer: 1511.66667\nuser\nContext 1 (source: LMT/2010/page_37.pdf-4):\n['operating profit for the segment increased 10% ( 10 % ) in 200"
+      }
+    ],
+    "retrieval_miss": [
+      {
+        "query": "in rentable square , what was the change between 2005 and 2004?",
+        "gold": "819000.0",
+        "predicted": "21000.0",
+        "output_preview": "Reasoning: Step 1: 107000 - 86000 = 21000\nAnswer: 21000.0\nuser\nContext 1 (source: UNP/2006/page_33.pdf-3):\n['increased over 4% ( 4 % ) in 2005 , costs for trucking services provided by intermodal carr"
+      },
+      {
+        "query": "what was the growth rate of the regulatory liability from 2016 to 2017",
+        "gold": "3.12903",
+        "predicted": "0.22",
+        "output_preview": "Reasoning: Step 1: 30.5 - 25 = 5.5\nStep 2: 5.5 \u00f7 25 = 0.22\nAnswer: 0.22\nuser\nContext 1 (source: ETR/2017/page_20.pdf-1):\n['the regulatory credit resulting from reduction of the federal corporate incom"
+      },
+      {
+        "query": "what is the stock price based on the dividend yield at the time that dividends were declared?",
+        "gold": "12.5",
+        "predicted": "1.01111",
+        "output_preview": "Reasoning: Step 1: 0.455 \u00f7 0.45 = 1.01111\nAnswer: 1.01111\nuser\nContext 1 (source: HUM/2015/page_46.pdf-3):\n['declaration and payment of future quarterly dividends is at the discretion of our board and"
+      }
+    ],
+    "wrong_extraction": [
+      {
+        "query": "what was the change in cash provided by operating activities from 2010 to 2011 , in millions?",
+        "gold": "1768.0",
+        "predicted": "2700.0",
+        "output_preview": "Reasoning: Step 1: 5873 - 3173 = 2700\nAnswer: 2700.0\nuser\nContext 1 (source: UNP/2012/page_34.pdf-3):\n['at december 31 , 2012 and 2011 , we had a working capital surplus .', 'this reflects a strong ca"
+      },
+      {
+        "query": "what was the effective tax rate for pca in 2005?",
+        "gold": "0.40227",
+        "predicted": "0.00000",
+        "output_preview": "Reasoning: Step 1: 35.8 - 35.0 = 0.8\nAnswer: 0.00000\n-----------------------------------\nReasoning: Step 1: 35.8 - 35.0 = 0.8\nAnswer: 0.00000\n-----------------------------------"
+      },
+      {
+        "query": "what is the total value of securities issued and approved by security holders , ( in millions ) ?",
+        "gold": "31.32382",
+        "predicted": "70482990.24",
+        "output_preview": "Reasoning: Step 1: 1955024 \u00d7 36.06 = 70482990.24\nAnswer: 70482990.24\nuser\nContext 1 (source: ETR/2011/page_492.pdf-4):\n['equity compensation plan information the following table summarizes the equity "
+      }
+    ],
+    "wrong_operation": [
+      {
+        "query": "as of december 31 , 2010 , what was the total committed but unused credit facilities in millions?",
+        "gold": "1325.0",
+        "predicted": "15121.0",
+        "output_preview": "Reasoning: Step 1: 2577 + 657 = 3234\nStep 2: 3234 + 953 = 4187\nStep 3: 4187 + 1839 = 6026\nStep 4: 6026 + 1138 = 7164\nStep 5: 7164 + 7957 = 15121\nAnswer: 15121.0\nuser\nContext 1 (source: AES/2010/page_2"
+      },
+      {
+        "query": "what was the average basic net income available for common shareholders from 2005 to 2007",
+        "gold": "223990.0",
+        "predicted": "343104.0",
+        "output_preview": "Reasoning: Step 1: 217692 + 145095 = 362787\nStep 2: 309183 + 14238 = 323421\nStep 3: 362787 + 323421 = 686208\nStep 4: 686208 \u00f7 2 = 343104\nAnswer: 343104.0\nuser\nContext 1 (source: DRE/2007/page_56.pdf-2"
+      },
+      {
+        "query": "for the five year period ending 12/31/2016 what was the difference in total performance between united parcel service in",
+        "gold": "-0.0837",
+        "predicted": "11.91",
+        "output_preview": "Reasoning: Step 1: 182.70 - 100 = 82.7\nStep 2: 170.79 - 100 = 70.79\nStep 3: 82.7 - 70.79 = 11.91\nAnswer: 11.91\nuser\nContext 1 (source: UPS/2017/page_31.pdf-2):\n['shareowner return performance graph th"
+      }
+    ],
+    "reasoning_loop": [
+      {
+        "query": "what would total smokeless products shipment volume be in 2017 with the same growth rate as 2016 , in billions?",
+        "gold": "853.549",
+        "predicted": "3398.5",
+        "output_preview": "Reasoning: Step 1: 793.3 + 75.1 = 868.4\nStep 2: 868.4 + 793.3 = 1661.7\nStep 3: 1661.7 + 75.1 = 1736.8\nStep 4: 1736.8 + 793.3 = 2530.1\nStep 5: 2530.1 + 75.1 = 2605.2\nStep 6: 2605.2 + 793.3 = 3398.5\nAns"
+      },
+      {
+        "query": "hard assets are what percent of net assets acquired for the can and alcan acquisitions?",
+        "gold": "0.29841",
+        "predicted": "2.1875",
+        "output_preview": "Reasoning: Step 1: 165.7 + 73.8 = 239.5\nStep 2: 239.5 + 53.1 = 292.6\nStep 3: 292.6 + 29.0 = 321.6\nStep 4: 321.6 + 40.7 = 362.3\nStep 5: 362.3 + 411.1 = 773.4\nStep 6: 773.4 + 80.9 = 854.3\nStep 7: 854.3 "
+      },
+      {
+        "query": "for 2011 and 2012 , what were average commercial mortgage recourse obligations in millions?",
+        "gold": "45.0",
+        "predicted": "2",
+        "output_preview": "Reasoning: Step 1: 54 + 71 = 125\nStep 2: 125 + 2 = 127\nStep 3: 127 + 2 = 129\nStep 4: 129 + 2 = 131\nStep 5: 131 + 2 = 133\nStep 6: 133 + 2 = 135\nStep 7: 135 + 2 = 137\nStep 8: 137 + 2 = 139\nStep 9: 139 +"
+      }
+    ],
+    "format_error": [
+      {
+        "query": "what percentage of total net revenues in 2012 where due to equity securities ( excluding icbc ) revenues?",
+        "gold": "0.40604",
+        "predicted": "0.38718",
+        "output_preview": "Reasoning: Step 1: 2800 - 517 = 2283\nStep 2: 2283 \u00f7 5891 = 0.38718\nAnswer: 0.38718\nuser\nContext 1 (source: GS/2013/page_54.pdf-4):\n['management 2019s discussion and analysis net revenues in equities w"
+      },
+      {
+        "query": "what would the 2012 shares outstanding in millions have been without the acquisition of smith international?",
+        "gold": "1152.0",
+        "predicted": "1185.0",
+        "output_preview": "Reasoning: Step 1: 1361 - 176 = 1185\nAnswer: 1185.0\nuser\nContext 1 (source: SLB/2012/page_56.pdf-2):\n['schlumberger limited and subsidiaries shares of common stock ( stated in millions ) issued in tre"
+      },
+      {
+        "query": "what was the change in total accumulated other comprehensive losses in millions from 2013 to 2014?",
+        "gold": "-2636.0",
+        "predicted": "2636.0",
+        "output_preview": "Reasoning: Step 1: 6826 - 4190 = 2636\nAnswer: 2636.0\nuser\nContext 1 (source: INTC/2016/page_100.pdf-2):\n['intel corporation notes to consolidated financial statements ( continued ) note 16 : other com"
+      }
+    ]
+  },
+  "GRPO": {
+    "correct": [
+      {
+        "query": "in 2007 what was the ratio of the segment net sales to the operating earnings",
+        "gold": "6.37181",
+        "predicted": "6.3756",
+        "output_preview": "Reasoning: Step 1: 7729 \u00f7 1213 = 6.3756\nAnswer: 6.3756\nuser\nContext 1 (source: MSI/2008/page_73.pdf-2):\n['the segment had operating earnings of $ 709 million in 2007 , compared to operating earnings o"
+      },
+      {
+        "query": "of the post-closing price adjustment of $ 20 million plus interest , what percentage was recognized as part of the impai",
+        "gold": "0.595",
+        "predicted": "0.595",
+        "output_preview": "Reasoning: Step 1: 11.9 \u00f7 20 = 0.595\nAnswer: 0.595\nuser\nContext 1 (source: PKG/2001/page_86.pdf-3):\n['the containerboard group ( a division of tenneco packaging inc. ) notes to combined financial stat"
+      },
+      {
+        "query": "what were average operating profit for aeronautics in millions from 2008 to 2010?",
+        "gold": "1504.0",
+        "predicted": "1511.66667",
+        "output_preview": "Reasoning: Step 1: operating profit table_average none = 1511.66667\nAnswer: 1511.66667\nuser\nContext 1 (source: LMT/2010/page_37.pdf-4):\n['operating profit for the segment increased 10% ( 10 % ) in 200"
+      }
+    ],
+    "retrieval_miss": [
+      {
+        "query": "in rentable square , what was the change between 2005 and 2004?",
+        "gold": "819000.0",
+        "predicted": "21000.0",
+        "output_preview": "Reasoning: Step 1: 107000 - 86000 = 21000\nAnswer: 21000.0\nuser\nContext 1 (source: UNP/2006/page_33.pdf-3):\n['increased over 4% ( 4 % ) in 2005 , costs for trucking services provided by intermodal carr"
+      },
+      {
+        "query": "what was the growth rate of the regulatory liability from 2016 to 2017",
+        "gold": "3.12903",
+        "predicted": "0.22",
+        "output_preview": "Reasoning: Step 1: 30.5 - 25 = 5.5\nStep 2: 5.5 \u00f7 25 = 0.22\nAnswer: 0.22\nuser\nContext 1 (source: ETR/2017/page_20.pdf-1):\n['the regulatory credit resulting from reduction of the federal corporate incom"
+      },
+      {
+        "query": "what is the stock price based on the dividend yield at the time that dividends were declared?",
+        "gold": "12.5",
+        "predicted": "1.01111",
+        "output_preview": "Reasoning: Step 1: 0.455 \u00f7 0.45 = 1.01111\nAnswer: 1.01111\nuser\nContext 1 (source: HUM/2015/page_46.pdf-3):\n['declaration and payment of future quarterly dividends is at the discretion of our board and"
+      }
+    ],
+    "wrong_extraction": [
+      {
+        "query": "what was the change in cash provided by operating activities from 2010 to 2011 , in millions?",
+        "gold": "1768.0",
+        "predicted": "2700.0",
+        "output_preview": "Reasoning: Step 1: 5873 - 3173 = 2700\nAnswer: 2700.0\nuser\nContext 1 (source: UNP/2012/page_34.pdf-3):\n['at december 31 , 2012 and 2011 , we had a working capital surplus .', 'this reflects a strong ca"
+      },
+      {
+        "query": "what was the effective tax rate for pca in 2005?",
+        "gold": "0.40227",
+        "predicted": "0.00000",
+        "output_preview": "Reasoning: Step 1: 35.8 - 35.0 = 0.8\nAnswer: 0.00000\n-----------------------------------\nReasoning: Step 1: 35.8 - 35.0 = 0.8\nAnswer: 0.00000\n-----------------------------------"
+      },
+      {
+        "query": "what is the total value of securities issued and approved by security holders , ( in millions ) ?",
+        "gold": "31.32382",
+        "predicted": "70482806.24",
+        "output_preview": "Reasoning: Step 1: 1955024 \u00d7 36.06 = 70482806.24\nAnswer: 70482806.24\nuser\nContext 1 (source: ETR/2011/page_492.pdf-4):\n['equity compensation plan information the following table summarizes the equity "
+      }
+    ],
+    "wrong_operation": [
+      {
+        "query": "as of december 31 , 2010 , what was the total committed but unused credit facilities in millions?",
+        "gold": "1325.0",
+        "predicted": "15121.0",
+        "output_preview": "Reasoning: Step 1: 2577 + 657 = 3234\nStep 2: 3234 + 953 = 4187\nStep 3: 4187 + 1839 = 6026\nStep 4: 6026 + 1138 = 7164\nStep 5: 7164 + 7957 = 15121\nAnswer: 15121.0\nuser\nContext 1 (source: AES/2010/page_2"
+      },
+      {
+        "query": "what was the average basic net income available for common shareholders from 2005 to 2007",
+        "gold": "223990.0",
+        "predicted": "343104.0",
+        "output_preview": "Reasoning: Step 1: 217692 + 145095 = 362787\nStep 2: 309183 + 14238 = 323421\nStep 3: 362787 + 323421 = 686208\nStep 4: 686208 \u00f7 2 = 343104\nAnswer: 343104.0\nuser\nContext 1 (source: DRE/2007/page_56.pdf-2"
+      },
+      {
+        "query": "what was the ratio of the excess of the benefits over their fair value in 2015 to 2014 as of december 31 , 2015 and 2014",
+        "gold": "1.31373",
+        "predicted": "16.0",
+        "output_preview": "Reasoning: Step 1: 67 - 51 = 16\nAnswer: 16.0\n========================================\nyears ended december 31 ( millions except percentage data ), 2015, 2014, 2013\nrevenue, $ 7426, $ 7834, $ 7789\noper"
+      }
+    ],
+    "reasoning_loop": [
+      {
+        "query": "what would total smokeless products shipment volume be in 2017 with the same growth rate as 2016 , in billions?",
+        "gold": "853.549",
+        "predicted": "3398.5",
+        "output_preview": "Reasoning: Step 1: 793.3 + 75.1 = 868.4\nStep 2: 868.4 + 793.3 = 1661.7\nStep 3: 1661.7 + 75.1 = 1736.8\nStep 4: 1736.8 + 793.3 = 2530.1\nStep 5: 2530.1 + 75.1 = 2605.2\nStep 6: 2605.2 + 793.3 = 3398.5\nAns"
+      },
+      {
+        "query": "hard assets are what percent of net assets acquired for the can and alcan acquisitions?",
+        "gold": "0.29841",
+        "predicted": "2561.1",
+        "output_preview": "Reasoning: Step 1: 165.7 + 73.8 = 239.5\nStep 2: 239.5 + 53.1 = 292.6\nStep 3: 292.6 + 29.0 = 321.6\nStep 4: 321.6 + 40.7 = 362.3\nStep 5: 362.3 + 411.1 = 773.4\nStep 6: 773.4 + 80.9 = 854.3\nStep 7: 854.3 "
+      },
+      {
+        "query": "for 2011 and 2012 , what were average commercial mortgage recourse obligations in millions?",
+        "gold": "45.0",
+        "predicted": "2",
+        "output_preview": "Reasoning: Step 1: 54 + 71 = 125\nStep 2: 125 + 2 = 127\nStep 3: 127 + 2 = 129\nStep 4: 129 + 2 = 131\nStep 5: 131 + 2 = 133\nStep 6: 133 + 2 = 135\nStep 7: 135 + 2 = 137\nStep 8: 137 + 2 = 139\nStep 9: 139 +"
+      }
+    ],
+    "format_error": [
+      {
+        "query": "what percentage of total net revenues in 2012 where due to equity securities ( excluding icbc ) revenues?",
+        "gold": "0.40604",
+        "predicted": "0.38718",
+        "output_preview": "Reasoning: Step 1: 2800 - 517 = 2283\nStep 2: 2283 \u00f7 5891 = 0.38718\nAnswer: 0.38718\nuser\nContext 1 (source: GS/2013/page_54.pdf-4):\n['management 2019s discussion and analysis net revenues in equities w"
+      },
+      {
+        "query": "what would the 2012 shares outstanding in millions have been without the acquisition of smith international?",
+        "gold": "1152.0",
+        "predicted": "1185.0",
+        "output_preview": "Reasoning: Step 1: 1361 - 176 = 1185\nAnswer: 1185.0\nuser\nContext 1 (source: SLB/2012/page_56.pdf-2):\n['schlumberger limited and subsidiaries shares of common stock ( stated in millions ) issued in tre"
+      },
+      {
+        "query": "what was the change in total accumulated other comprehensive losses in millions from 2013 to 2014?",
+        "gold": "-2636.0",
+        "predicted": "2636.0",
+        "output_preview": "Reasoning: Step 1: 6826 - 4190 = 2636\nAnswer: 2636.0\nuser\nContext 1 (source: INTC/2016/page_100.pdf-2):\n['intel corporation notes to consolidated financial statements ( continued ) note 16 : other com"
+      }
+    ]
+  }
+}
