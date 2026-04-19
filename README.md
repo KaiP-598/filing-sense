@@ -40,6 +40,36 @@ With gold context (bypassing retrieval), GRPO achieves **68%** — the 68% vs 17
 
 For detailed analysis, error taxonomy, and production roadmap, see [ANALYSIS.md](ANALYSIS.md).
 
+## Agentic RAG Pipeline
+
+On top of the base RAG pipeline, `src/agent.py` implements a LangGraph agent that improves accuracy from 17.0% to **20.5%** through query decomposition.
+
+```
+Query
+  │
+  ▼
+[Decompose] ── breaks "change from 2010 to 2011?" into sub-queries
+  │             ["operating income 2010", "operating income 2011"]
+  ▼
+[Retrieve] ── runs hybrid BM25+FAISS per sub-query, deduplicates results
+  │
+  ▼
+[Grade] ── OpenAI grades chunks for relevance; retries with rewritten
+  │         query if none pass (max 2 retries)
+  ▼
+[Generate] ── GRPO model answers from graded chunks
+```
+
+**Ablation findings:**
+
+| Configuration | Accuracy | Retried Queries |
+|---|---|---|
+| Baseline (single-pass RAG) | 17.0% | 0% |
+| Agent v1 (strict grading) | **20.5%** | 35% |
+| Agent v2 (generous grading) | 19.0% | 8% |
+
+Query decomposition drove the entire +3.5% gain. Relevance grading was neutral-to-negative — strict grading filtered valid chunks, generous grading added noise. The practical conclusion: decomposition is high-value; grading requires careful calibration for this domain.
+
 ## Models
 
 All checkpoints on HuggingFace:
