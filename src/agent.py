@@ -184,11 +184,12 @@ def make_retrieve_node(index: DualIndex, reranker=None, top_k: int = 5):
 # ---------------------------------------------------------------------------
 
 def make_grade_node(openai_api_key: str, model_name: str = "gpt-4o-mini"):
-    """Create a node that grades each retrieved chunk for relevance.
+    """Create a node that grades retrieved chunks for relevance in a single batch call.
 
-    Uses OpenAI API for grading — more reliable than a 3B model at
-    judging whether a chunk contains the data needed to answer the question.
-    Returns only chunks graded as relevant.
+    Sends all chunks in one prompt instead of one call per chunk — faster, cheaper,
+    and allows the grader to compare chunks against each other.
+    Uses a generous grading bar: any chunk topically related or containing relevant
+    numbers/terms passes, to avoid false negatives.
     """
     import openai
 
@@ -197,37 +198,54 @@ def make_grade_node(openai_api_key: str, model_name: str = "gpt-4o-mini"):
     def grade(state: AgentState) -> dict:
         query = state["query"]
         chunks = state.get("retrieved_chunks", [])
-        relevant = []
+        if not chunks:
+            return {"relevant_chunks": []}
 
-        for r in chunks:
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are a relevance grader for financial document retrieval. "
-                            "Given a question and a document chunk from a SEC 10-K filing, "
-                            "determine if the chunk contains data needed to answer the question.\n\n"
-                            "Reply with ONLY 'yes' or 'no'."
-                        ),
-                    },
-                    {
-                        "role": "user",
-                        "content": (
-                            f"Question: {query}\n\n"
-                            f"Document:\n{r.chunk.text[:1500]}\n\n"
-                            "Does this document contain data needed to answer the question?"
-                        ),
+        # Build batch prompt — all chunks in one API call
+        chunks_text = ""
+        for i, r in enumerate(chunks, 1):
+            chunks_text += f"Chunk {i}:\n{r.chunk.text[:800]}\n\n"
+
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a relevance grader for financial document retrieval. "
+                        "Given a question and multiple document chunks from SEC 10-K filings, "
+                        "identify which chunks are topically related to the question and could "
+                        "help answer it, even partially.\n\n"
+                        "Be generous — if a chunk contains any numbers, metrics, or terms "
+                        "related to the question topic, mark it as relevant.\n\n"
+                        "Reply with ONLY a comma-separated list of relevant chunk numbers. "
+                        "Example: '1,3,5' or '2,4' or 'none'."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Question: {query}\n\n"
+                        f"{chunks_text}"
+                        "Which chunk numbers are relevant to answering this question?"
+                    ),
                     },
                 ],
                 temperature=0.0,
-                max_tokens=3,
+                max_tokens=30,
             )
 
-            verdict = response.choices[0].message.content.strip().lower()
-            if verdict.startswith("yes"):
-                relevant.append(r)
+        raw = response.choices[0].message.content.strip().lower()
+
+        # Parse "1,3,5" or "none"
+        relevant = []
+        if raw != "none":
+            for part in raw.split(","):
+                part = part.strip()
+                if part.isdigit():
+                    idx = int(part) - 1  # convert to 0-based
+                    if 0 <= idx < len(chunks):
+                        relevant.append(chunks[idx])
 
         return {"relevant_chunks": relevant}
 
