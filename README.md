@@ -34,6 +34,7 @@ Query → Hybrid Retrieval (BM25 + FAISS + reranker) → LLM → Answer
 | + LoRA SFT | 16.5% |
 | + Full SFT | 16.5% |
 | + GRPO | 17.0% |
+| + GRPO + LangGraph Agent | **20.5%** |
 
 With gold context (bypassing retrieval), GRPO achieves **68%** — the 68% vs 17% gap shows retrieval is the bottleneck, not model quality.
 

@@ -1,0 +1,7 @@
+{
+  "accuracy": 19.0,
+  "correct": 38,
+  "total": 200,
+  "retried_queries": 16,
+  "avg_relevant_chunks": 3.51
+}
