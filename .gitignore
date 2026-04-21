@@ -25,6 +25,7 @@ Thumbs.db
 data/raw/
 data/finqa_cache/
 data/sft_train.jsonl
+data/live_chunks/
 *.faiss
 *.pkl
 

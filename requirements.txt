@@ -21,5 +21,13 @@ pandas>=2.0.0
 langgraph>=1.0.0
 openai>=1.0.0
 
+# EDGAR live mode
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+requests>=2.31.0
+
+# Demo
+gradio>=4.0.0
+
 # Utilities
 tqdm>=4.65.0

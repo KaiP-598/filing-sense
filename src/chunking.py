@@ -89,3 +89,89 @@ def chunk_dataset(dataset) -> list[Chunk]:
     for i, ex in enumerate(dataset):
         chunks.append(chunk_finqa_example(ex, idx=i))
     return chunks
+
+
+def chunk_raw_text(
+    text: str,
+    ticker: str = "unknown",
+    date: str = "",
+    chunk_size: int = 2000,
+    overlap: int = 200,
+) -> list[Chunk]:
+    """Split raw 10-K text into overlapping chunks for indexing.
+
+    Unlike FinQA (which has pre-structured pre/table/post), raw EDGAR text
+    is one continuous string. We use a sliding window:
+        - chunk_size: ~2000 chars per chunk (~500 tokens)
+        - overlap: 200 chars shared between adjacent chunks, so a table
+          that straddles a boundary appears in both chunks
+
+    We split on whitespace boundaries (never mid-word) to keep text readable.
+
+    Args:
+        text: full plain text of the 10-K
+        ticker: company ticker for metadata
+        date: filing date for metadata
+        chunk_size: target size per chunk in characters
+        overlap: chars to repeat between adjacent chunks
+
+    Returns:
+        list of Chunk objects ready for build_index()
+    """
+    words = text.split()
+    chunks: list[Chunk] = []
+
+    # Build char-indexed word boundaries for clean splits
+    # Instead of splitting on exact char count, accumulate words until we hit chunk_size
+    current_words: list[str] = []
+    current_len = 0
+    chunk_idx = 0
+    word_idx = 0
+
+    while word_idx < len(words):
+        word = words[word_idx]
+        current_words.append(word)
+        current_len += len(word) + 1  # +1 for space
+
+        if current_len >= chunk_size:
+            chunk_text = " ".join(current_words)
+            chunk_id = f"{ticker}_{date}_{chunk_idx}"
+
+            chunks.append(Chunk(
+                chunk_id=chunk_id,
+                text=chunk_text,
+                pre_text=chunk_text,
+                table_text="",
+                post_text="",
+                metadata={"ticker": ticker, "date": date, "chunk_idx": chunk_idx},
+            ))
+
+            chunk_idx += 1
+
+            # Move back `overlap` chars worth of words for the next chunk
+            overlap_words = []
+            overlap_len = 0
+            for w in reversed(current_words):
+                overlap_len += len(w) + 1
+                if overlap_len > overlap:
+                    break
+                overlap_words.insert(0, w)
+
+            current_words = overlap_words
+            current_len = sum(len(w) + 1 for w in current_words)
+
+        word_idx += 1
+
+    # Last partial chunk
+    if current_words:
+        chunk_text = " ".join(current_words)
+        chunks.append(Chunk(
+            chunk_id=f"{ticker}_{date}_{chunk_idx}",
+            text=chunk_text,
+            pre_text=chunk_text,
+            table_text="",
+            post_text="",
+            metadata={"ticker": ticker, "date": date, "chunk_idx": chunk_idx},
+        ))
+
+    return chunks
