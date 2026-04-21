@@ -88,6 +88,13 @@ class FilingSensePipeline:
             t = record["ticker"]
             ticker_records.setdefault(t, []).append(record)
 
+        # Load embedding model once, reuse across all tickers
+        from sentence_transformers import SentenceTransformer
+        import torch
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        print(f"[Pipeline] Loading embedding model (device={device})...")
+        embed_model = SentenceTransformer("BAAI/bge-small-en-v1.5", device=device)
+
         print(f"[Pipeline] Building indexes for {len(ticker_records)} tickers...")
         for ticker, records in ticker_records.items():
             chunks = [
@@ -101,7 +108,7 @@ class FilingSensePipeline:
                 )
                 for r in records
             ]
-            index = build_index(chunks, show_progress=False)
+            index = build_index(chunks, embed_model=embed_model, show_progress=False)
             self._indexes[ticker] = TickerIndex(
                 index=index,
                 filing_date=records[0]["date"],

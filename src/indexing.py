@@ -45,6 +45,7 @@ def _tokenize_simple(text: str) -> list[str]:
 def build_index(
     chunks: list[Chunk],
     embed_model_name: str = DEFAULT_EMBED_MODEL,
+    embed_model: SentenceTransformer | None = None,
     batch_size: int = 64,
     show_progress: bool = True,
 ) -> DualIndex:
@@ -52,17 +53,19 @@ def build_index(
 
     Args:
         chunks: list of Chunk objects to index
-        embed_model_name: sentence-transformer model ID
+        embed_model_name: sentence-transformer model ID (used if embed_model not provided)
+        embed_model: pre-loaded SentenceTransformer (pass to avoid reloading across tickers)
         batch_size: encoding batch size
         show_progress: show progress bar during encoding
     """
     texts = [c.text for c in chunks]
 
     # --- Dense index (FAISS) ---
-    print(f"Loading embedding model: {embed_model_name}")
-    device = _default_device()
-    embed_model = SentenceTransformer(embed_model_name, device=device)
-    print(f"Using device: {device}")
+    if embed_model is None:
+        print(f"Loading embedding model: {embed_model_name}")
+        device = _default_device()
+        embed_model = SentenceTransformer(embed_model_name, device=device)
+        print(f"Using device: {device}")
 
     print(f"Encoding {len(texts)} chunks...")
     embeddings = embed_model.encode(
