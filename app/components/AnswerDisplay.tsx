@@ -83,7 +83,7 @@ export default function AnswerDisplay({ result, loading, error }: Props) {
               {result.sources.length} chunks
             </span>
             <span className="text-xs text-zinc-400">
-              {result.ticker} · {result.filing_date}
+              {result.ticker} · {result.filing_date.slice(0, 10)}
             </span>
           </div>
           <ChevronIcon open={sourcesOpen} />
