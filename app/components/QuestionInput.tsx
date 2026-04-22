@@ -3,10 +3,10 @@
 import { KeyboardEvent } from "react"
 
 const EXAMPLE_QUESTIONS = [
-  "What was revenue growth year over year?",
-  "How much did the company spend on R&D?",
-  "What are the biggest risk factors?",
-  "What is the gross margin?",
+  "What was the growth rate in net revenue from last year?",
+  "What is the ratio of R&D expenses to total revenue?",
+  "What was the percentage change in operating profit?",
+  "What portion of total obligations are due within 1 year?",
 ]
 
 interface Props {

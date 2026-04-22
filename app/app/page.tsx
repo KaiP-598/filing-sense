@@ -106,12 +106,13 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Performance notice */}
-          <div className="mb-8 rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4">
-            <p className="text-sm font-semibold text-zinc-700 mb-1">⚡ Powered by GPU — answers in ~15 seconds</p>
-            <p className="text-sm text-zinc-500">
-              This demo runs a 3B-parameter Qwen2.5 model fine-tuned with GRPO on an RTX 3070 GPU.
-              Answers stream in real-time as the model generates them.
+          {/* Research notice */}
+          <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
+            <p className="text-sm font-semibold text-amber-800 mb-1">⚠️ Research demo — answers may be inaccurate</p>
+            <p className="text-sm text-amber-700">
+              This model was trained on FinQA (SEC 10-K filings, 1999–2019) and fine-tuned with GRPO, improving accuracy from <strong>11.5% → 17%</strong> end-to-end.
+              It works best on specific numerical questions: growth rates, ratios, margins, and percentage changes.
+              Filing data covers 30 companies from <strong>2025–2026 EDGAR filings</strong>.
             </p>
           </div>
 
