@@ -5,11 +5,12 @@ import { AnswerResponse } from "@/types"
 
 interface Props {
   result: AnswerResponse | null
+  streamingText: string
   loading: boolean
   error: string | null
 }
 
-export default function AnswerDisplay({ result, loading, error }: Props) {
+export default function AnswerDisplay({ result, streamingText, loading, error }: Props) {
   const [sourcesOpen, setSourcesOpen] = useState(false)
 
   if (error) {
@@ -18,6 +19,10 @@ export default function AnswerDisplay({ result, loading, error }: Props) {
         {error}
       </div>
     )
+  }
+
+  if (loading && streamingText) {
+    return <StreamingDisplay text={streamingText} />
   }
 
   if (loading) {
@@ -120,6 +125,23 @@ export default function AnswerDisplay({ result, loading, error }: Props) {
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function StreamingDisplay({ text }: { text: string }) {
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-5 shadow-sm">
+      <div className="mb-3 flex items-center gap-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+          Generating
+        </p>
+        <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-indigo-500" />
+      </div>
+      <p className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-zinc-600">
+        {text}
+        <span className="inline-block h-4 w-0.5 animate-pulse bg-indigo-500 align-text-bottom ml-0.5" />
+      </p>
     </div>
   )
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { TickerInfo, AnswerResponse } from "@/types"
-import { getTickers, getAnswer } from "@/lib/api"
+import { getTickers, streamAnswer } from "@/lib/api"
 import CompanySelector from "@/components/CompanySelector"
 import QuestionInput from "@/components/QuestionInput"
 import AnswerDisplay from "@/components/AnswerDisplay"
@@ -13,6 +13,7 @@ export default function Home() {
   const [selectedTicker, setSelectedTicker] = useState("NVDA")
   const [question, setQuestion] = useState("")
   const [result, setResult] = useState<AnswerResponse | null>(null)
+  const [streamingText, setStreamingText] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
@@ -29,9 +30,19 @@ export default function Home() {
     setLoading(true)
     setError(null)
     setResult(null)
+    setStreamingText("")
     try {
-      const res = await getAnswer({ ticker: selectedTicker, question })
-      setResult(res)
+      await streamAnswer(
+        { ticker: selectedTicker, question },
+        {
+          onToken: (text) => setStreamingText((prev) => prev + text),
+          onSources: (data) => {
+            setResult(data)
+            setStreamingText("")
+          },
+          onError: (detail) => setError(detail),
+        }
+      )
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong")
     } finally {
@@ -96,7 +107,7 @@ export default function Home() {
           </div>
 
           {/* Results */}
-          <AnswerDisplay result={result} loading={loading} error={error} />
+          <AnswerDisplay result={result} streamingText={streamingText} loading={loading} error={error} />
 
           {/* Footer */}
           <div className="mt-20 flex items-center justify-center gap-6 text-xs text-zinc-400">

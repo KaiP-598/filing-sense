@@ -24,3 +24,9 @@ export interface AnswerRequest {
   ticker: string
   question: string
 }
+
+export interface StreamCallbacks {
+  onToken: (text: string) => void
+  onSources: (data: AnswerResponse) => void
+  onError: (detail: string) => void
+}
