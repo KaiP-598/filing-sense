@@ -107,12 +107,11 @@ export default function Home() {
           </div>
 
           {/* Performance notice */}
-          <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
-            <p className="text-sm font-semibold text-amber-800 mb-1">⏱ Expect 2–5 minutes per query</p>
-            <p className="text-sm text-amber-700">
-              This demo runs a 3B-parameter Qwen2.5 model fine-tuned with GRPO on a free CPU instance.
-              Generating ~200 tokens on CPU takes 2–5 min — on an H100 GPU the same query finishes in ~2 seconds.
-              Hit submit and check back shortly. It&apos;s not frozen.
+          <div className="mb-8 rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4">
+            <p className="text-sm font-semibold text-zinc-700 mb-1">⚡ Powered by GPU — answers in ~15 seconds</p>
+            <p className="text-sm text-zinc-500">
+              This demo runs a 3B-parameter Qwen2.5 model fine-tuned with GRPO on an RTX 3070 GPU.
+              Answers stream in real-time as the model generates them.
             </p>
           </div>
 
