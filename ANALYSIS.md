@@ -55,7 +55,7 @@ We benchmark on [FinQA](https://arxiv.org/abs/2109.00122) (Chen et al., EMNLP 20
 |---|---|---|
 | BM25 only | 44.5% | 0.369 |
 | FAISS only | 28.0% | 0.221 |
-| Hybrid (BM25 + FAISS + RRF) | 46.5% | 0.374 |
+| Hybrid (BM25 sparse + FAISS dense via RRF) | 46.5% | 0.374 |
 
 ### GRPO with Gold Context
 
@@ -71,35 +71,7 @@ The 68% vs 17% gap tells the whole story: **the model can reason, but retrieval 
 
 ## Key Findings
 
-### 1. BM25 Beats FAISS on Financial Data
-
-BM25 (keyword matching) achieves 44.5% recall vs FAISS (semantic search) at 28.0%. Financial documents are terminology-heavy — exact terms like "operating income", "total debt", "fiscal year 2011" matter more than semantic similarity. Hybrid adds only 2% over BM25 alone.
-
-**Takeaway:** For terminology-heavy domains, always benchmark BM25 before investing in embeddings — exact lexical matches often outperform semantic similarity.
-
-### 2. LoRA = Full SFT on This Task
-
-Both achieve 16.5% end-to-end accuracy. This isn't surprising — the accuracy ceiling is set by retrieval (46.5% recall), not model capacity. LoRA with 0.3% of parameters matches full fine-tuning because the bottleneck is upstream.
-
-**Takeaway:** When retrieval caps end-to-end accuracy, LoRA (0.3% of parameters) matches full fine-tuning at 5× lower cost. Identify the bottleneck before scaling the model.
-
-### 3. GRPO Learns Reasoning, Not Just Format
-
-SFT teaches the model to *format* answers like the training data. GRPO teaches it to *reason correctly* — verified by the reward signal (exact-match on the numerical answer).
-
-Evidence: GRPO jumps from ~40% to 68% on gold context, while SFT variants plateau. The model learned multi-step financial math (percentage change, ratios, growth rates) that SFT alone couldn't teach.
-
-### 4. GRPO Overfits After 80 Steps
-
-Training peaked at step 80 (68%) and degraded to 60% by step 100. This is classic RL overfitting — the model memorizes training-distribution patterns that don't generalize. Early stopping is essential.
-
-### 5. Query Decomposition Outperforms Relevance Grading
-
-The LangGraph agent improved accuracy from 17.0% to 20.5% (+3.5%) with no retraining. Ablation across two grading strategies revealed that **query decomposition alone drove the entire gain** — breaking "change from 2010 to 2011" into targeted sub-queries ("operating income 2010", "operating income 2011") retrieved better chunks than a single broad query.
-
-Relevance grading added noise in both directions: strict grading filtered valid chunks (29% zero-relevant rate), generous grading passed noisy chunks (accuracy dropped to 19.0%). The practical takeaway: decomposition is high-value, grading requires careful calibration.
-
-### 6. Retrieval Is the Bottleneck (Error Taxonomy)
+### 1. Retrieval Is the Bottleneck, Not Reasoning (Error Taxonomy)
 
 We classified every wrong answer across all three models:
 
@@ -112,7 +84,7 @@ We classified every wrong answer across all three models:
 | Reasoning loop | 1 (0.5%) | 3 (1.5%) | 3 (1.5%) |
 | Format/sign error | 4 (2.0%) | 4 (2.0%) | 4 (2.0%) |
 
-**All three models have nearly identical error distributions.** The training method doesn't matter when retrieval fails — you can't reason over missing context.
+**All three models have nearly identical error distributions.** The training method doesn't matter when retrieval fails — you can't reason over missing context. With gold context (bypassing retrieval), GRPO jumps to 68% vs 17% end-to-end. The model can reason; retrieval just couldn't find the table.
 
 Error definitions:
 - **Retrieval miss**: correct chunk not in top-5 retrieved results
@@ -120,6 +92,36 @@ Error definitions:
 - **Wrong operation**: right numbers, wrong math (e.g., subtracted when should have divided)
 - **Reasoning loop**: model generates excessive steps, often repeating calculations
 - **Format/sign error**: correct computation but wrong sign, scale (% vs decimal), or rounding
+
+**Takeaway:** This is what earns the "retrieval is the bottleneck" claim — it's a measured 52%, not a guess. Future work should target retrieval before model capacity.
+
+### 2. BM25 Beats Vector Search on Financial Data
+
+BM25 (keyword matching) achieves 44.5% recall vs FAISS (semantic / vector search) at 28.0%. Financial documents are terminology-heavy — exact terms like "operating income", "total debt", "fiscal year 2011" matter more than semantic similarity. Hybrid (BM25 sparse + FAISS dense via RRF) adds only 2% over BM25 alone.
+
+**Takeaway:** For terminology-heavy domains, always benchmark BM25 before investing in embeddings or a vector database — exact lexical matches often outperform semantic similarity.
+
+### 3. LoRA = Full SFT on This Task
+
+Both achieve 16.5% end-to-end accuracy. LoRA (rank 16, all linear layers) trained 0.3% of the parameters at ~5× lower compute; Full SFT trained 100% of them. Both gained 5 points over the base model. They tied because the accuracy ceiling is set by retrieval (46.5% recall@5), not model capacity — you can't fine-tune past an upstream bottleneck.
+
+**Takeaway:** When retrieval caps end-to-end accuracy, LoRA captures the full fine-tuning gain at 5× lower compute. Identify the real bottleneck before scaling the model.
+
+### 4. GRPO Learns Reasoning, Not Just Format
+
+SFT teaches the model to *format* answers like the training data. GRPO teaches it to *reason correctly* — verified by the reward signal (exact-match on the numerical answer).
+
+Evidence: GRPO jumps from ~40% to 68% on gold context, while SFT variants plateau. The model learned multi-step financial math (percentage change, ratios, growth rates) that SFT alone couldn't teach.
+
+### 5. Query Decomposition Outperforms Relevance Grading
+
+The LangGraph agent improved accuracy from 17.0% to 20.5% (+3.5%) with no retraining. Ablation across two grading strategies revealed that **query decomposition alone drove the entire gain** — breaking "change from 2010 to 2011" into targeted sub-queries ("operating income 2010", "operating income 2011") retrieved better chunks than a single broad query.
+
+Relevance grading added noise in both directions: strict grading filtered valid chunks (29% zero-relevant rate), generous grading passed noisy chunks (accuracy dropped to 19.0%). The practical takeaway: decomposition is high-value, grading requires careful calibration.
+
+### 6. GRPO Overfits After 80 Steps
+
+Training peaked at step 80 (68%) and degraded to 60% by step 100. This is classic RL overfitting — the model memorizes training-distribution patterns that don't generalize. Early stopping is essential.
 
 ## Production Roadmap
 

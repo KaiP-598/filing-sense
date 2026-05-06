@@ -36,9 +36,23 @@ Query → Hybrid Retrieval (BM25 + FAISS + reranker) → LLM → Answer
 | + GRPO | 17.0% |
 | + GRPO + LangGraph Agent | **20.5%** |
 
-With gold context (bypassing retrieval), GRPO achieves **68%** — the 68% vs 17% gap shows retrieval is the bottleneck, not model quality.
+With gold context (bypassing retrieval), GRPO achieves **68%** — the 68% vs 17% gap shows retrieval is the bottleneck, not reasoning.
 
-For detailed analysis, error taxonomy, and production roadmap, see [ANALYSIS.md](ANALYSIS.md).
+## Key Findings
+
+### 1. Retrieval is the bottleneck, not reasoning
+
+Classified every wrong answer across LoRA SFT, Full SFT, and GRPO into 5 categories — error distributions were **nearly identical across all three models**. 52% of wrong answers were retrieval misses (the right chunk never reached the model). Training method doesn't matter when the context is missing. With gold context bypassing retrieval, GRPO hits **68%** vs 17% end-to-end. The model can reason; retrieval just couldn't find the table.
+
+### 2. BM25 beats vector search on financial data
+
+44.5% vs 28.0% recall@5. Hybrid (BM25 sparse + FAISS dense via RRF) added only 2 points over BM25 alone. Financial documents are terminology-heavy — exact terms like "operating income", "fiscal year 2011" mattered more than semantic similarity. Always benchmark BM25 before investing in vector databases for a terminology-heavy domain.
+
+### 3. LoRA matched Full SFT exactly
+
+Both gained 5 points over the base model (16.5% e2e). LoRA (rank 16, all linear layers) trained 0.3% of the parameters at ~5× lower compute. They tied because retrieval caps the system at 46.5% recall@5 — you can't fine-tune past an upstream bottleneck.
+
+For the full error taxonomy, retrieval ablations, training configurations, and production roadmap, see [ANALYSIS.md](ANALYSIS.md).
 
 ## Agentic RAG Pipeline
 
