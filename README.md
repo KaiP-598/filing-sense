@@ -18,12 +18,21 @@ User:  "What was the pension cost growth rate from 2012 to 2013?"
 ## Architecture
 
 ```
-Query → Hybrid Retrieval (BM25 + FAISS + reranker) → LLM → Answer
-         │                                              │
-         ├─ BM25: exact keyword matching (44.5%)        ├─ Base Qwen2.5-3B
-         ├─ FAISS: bge-small-en-v1.5 (28.0%)           ├─ + LoRA SFT
-         ├─ RRF: merge both rankings (46.5%)            ├─ + Full SFT
-         └─ Cross-encoder: ms-marco-MiniLM-L-6-v2      └─ + GRPO (68% gold)
+Query
+  │
+  ▼
+[Retrieve] ── BM25  (sparse, keyword matching)
+  │           FAISS (dense, bge-small-en-v1.5)
+  │           RRF   (merge both rankings)
+  │
+  ▼
+[Rerank]   ── Cross-encoder: ms-marco-MiniLM-L-6-v2
+  │
+  ▼
+[Generate] ── Qwen2.5-3B  (Base / + LoRA SFT / + Full SFT / + GRPO)
+  │
+  ▼
+Answer
 ```
 
 ## Results (200 FinQA test examples)
