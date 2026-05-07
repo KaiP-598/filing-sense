@@ -54,7 +54,7 @@ def chart_sankey_funnel(model: str = "LoRA SFT"):
 
     nodes = [
         dict(label=f"Query<br>n = {n_total}",                                  color=QUERY_C,    x=0.001, y=0.30),
-        dict(label="<b>Hybrid Retrieval</b><br>BM25 · FAISS · RRF",            color=PIPELINE_C, x=0.16,  y=0.30),
+        dict(label="<b>Hybrid Retrieval</b><br>BM25 (sparse) · FAISS (dense)", color=PIPELINE_C, x=0.16,  y=0.30),
         dict(label="<b>Cross-encoder<br>Rerank</b>",                           color=PIPELINE_C, x=0.31,  y=0.30),
         dict(label="<b>LLM: Extract</b><br>pull the numbers<br>→ 111, 89",                  color=LLM_C,      x=0.47,  y=0.30),
         dict(label="<b>LLM: Compute</b><br>run the math<br>(111−89)/89 → 0.247",             color=LLM_C,      x=0.62,  y=0.30),
