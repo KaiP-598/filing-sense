@@ -53,6 +53,8 @@ With gold context (bypassing retrieval), GRPO achieves **68%** — the 68% vs 17
 
 Classified every wrong answer across LoRA SFT, Full SFT, and GRPO into 5 categories — error distributions were **nearly identical across all three models**. 52% of wrong answers were retrieval misses (the right chunk never reached the model). Training method doesn't matter when the context is missing. With gold context bypassing retrieval, GRPO hits **68%** vs 17% end-to-end. The model can reason; retrieval just couldn't find the table.
 
+![Sankey diagram tracing 200 FinQA questions through the FilingSense pipeline. The largest red ribbon — Retrieval miss — drops 53% of questions before the LLM sees the right context.](results/figures/pipeline_sankey.png)
+
 ### 2. BM25 beats vector search on financial data
 
 44.5% vs 28.0% recall@5. Hybrid (BM25 sparse + FAISS dense via RRF) added only 2 points over BM25 alone. Financial documents are terminology-heavy — exact terms like "operating income", "fiscal year 2011" mattered more than semantic similarity. Always benchmark BM25 before investing in vector databases for a terminology-heavy domain.
